@@ -52,7 +52,7 @@ public class Main {
         int[] fallTiles = saveTileArray(in); //Pre: >=1 && <=(tileNumber/3)
 
         //Creates the board
-        Board board = new Board(playerOrder, tileNumber, penaltyTiles, fallTiles);
+        Gameplay board = new Gameplay(playerOrder, tileNumber, penaltyTiles, fallTiles);
 
         //Processes commands
         executeCmdLoop(board, in);
@@ -83,7 +83,7 @@ public class Main {
      * @param board - the game board
      * @param in - Scanner input
      */
-    private static void executeCmdLoop(Board board, Scanner in) {
+    private static void executeCmdLoop(Gameplay board, Scanner in) {
         String cmd, arg;
         do {
             cmd = in.next(); //command
@@ -126,7 +126,7 @@ public class Main {
      * Prints the next player to roll the dice
      * @param board - the game board
      */
-    private static void printNextPlayer(Board board) {
+    private static void printNextPlayer(Gameplay board) {
         if (board.isGameOver()) {
             System.out.println("The game is over");
         } else {
@@ -139,7 +139,7 @@ public class Main {
      * @param board - the game board
      * @param player - the requested player's color
      */
-    private static void printPlayerSquare(Board board, String player) {
+    private static void printPlayerSquare(Gameplay board, String player) {
         if (player.length()!=2) { //space + 1 character, otherwise invalid player
             System.out.println("Nonexistent player");
         } else {
@@ -159,7 +159,7 @@ public class Main {
      * @param board - the game board
      * @param player - the requested player's color
      */
-    private static void printPlayerStatus(Board board, String player) {
+    private static void printPlayerStatus(Gameplay board, String player) {
         if (player.length()!=2) { //space + 1 character, otherwise invalid player
             System.out.println("Nonexistent player");
         } else {
@@ -183,7 +183,7 @@ public class Main {
      * @param dice1 - the first dice's value
      * @param dice2 - the second dice's value
      */
-    private static void rollDice(Board board, int dice1, int dice2) {
+    private static void rollDice(Gameplay board, int dice1, int dice2) {
         if (dice1<1 || dice1 >6 || dice2<1 || dice2>6) {
             System.out.println("Invalid dice");
         } else if (board.isGameOver()) {
@@ -198,7 +198,7 @@ public class Main {
      * Checks if the game is over and prints who won (if available)
      * @param board - the game board
      */
-    private static void printExitStatus(Board board) {
+    private static void printExitStatus(Gameplay board) {
         if (board.isGameOver()) {
             System.out.printf("%c won the game!\n",board.getWinner());
         } else {

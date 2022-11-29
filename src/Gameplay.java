@@ -6,7 +6,7 @@
  * Updates the position of each player after each turn
  */
 
-public class Board {
+public class Gameplay {
     //Constants
     private static final int NUMBER_OF_PLAYERS = 3;
     private static final int BIRD_TILE_MULT = 9; //defines a bird tile every N tiles
@@ -31,7 +31,7 @@ public class Board {
      * @param fallTiles - which tiles are marked as "fall"
      *   pre: >=1 && <=tileNumber-2 && size>=1 && size<=(tileNumber/3)
      */
-    public Board(String playerOrder, int tileNumber, int[] penaltyTiles, int[] fallTiles) {
+    public Gameplay(String playerOrder, int tileNumber, int[] penaltyTiles, int[] fallTiles) {
         this.tileNumber = tileNumber;
 
         //Initializes the board
