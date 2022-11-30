@@ -2,35 +2,53 @@ import java.util.Scanner;
 import java.io.*;
 
 //Generates board from the text file
+//Constructor reads from file and generates an array
+//Array can be called using method getBoard()
 public class BoardGen {
-    private static final int BIRD_TILE_MULT = 9; //defines a bird tile every N tiles
-    private static final int INT_BIRD = 1; //bird tile
-    private static final String FALL_CRAB = "crab";
-    private static final int INT_FALL_CRAB = 2; //fall-crab tile
-    private static final String FALL_DEATH = "death";
-    private static final int INT_FALL_DEATH = 3; //fall-death character
-    private static final String FALL_HELL = "hell";
-    private static final int INT_FALL_HELL = 4; //fall-hell character
+    public static final int BIRD_TILE_MULT = 9; //defines a bird tile every N tiles
+    public static final int INT_BIRD = 1; //bird tile
+    public static final String FALL_CRAB = "crab";
+    public static final int INT_FALL_CRAB = 2; //fall-crab tile
+    public static final String FALL_DEATH = "death";
+    public static final int INT_FALL_DEATH = 3; //fall-death character
+    public static final String FALL_HELL = "hell";
+    public static final int INT_FALL_HELL = 4; //fall-hell character
     //normal tiles are ZERO
     //penalty tiles are NEGATIVE NUMBERS (ex: -3 == penalty 3)
 
     private int[] board;
 
-    public BoardGen(String path) throws FileNotFoundException {
-        Scanner in = new Scanner (new FileReader(path));
+    public BoardGen(String path, int boardNumber) throws FileNotFoundException {
+        Scanner file = new Scanner (new FileReader(path));
+
+        //Skips lines until the correct board is read
+        skipUntil(file, boardNumber);
+
         //Receives the number of tiles
-        int tileNumber = in.nextInt();
-        in.nextLine(); //Pre: >=10 && <=150
+        int tileNumber = file.nextInt();
+        file.nextLine(); //Pre: >=10 && <=150
 
         //Creates the board (position 0 = tile 1)
         board = new int[tileNumber];
 
         //Populates the board
         populateBird(board);
-        populatePenalty(in, board); //Pre: >=1 && <=(tileNumber/3)
-        populateFall(in, board); //Pre: >=1 && <=(tileNumber/3)
+        populatePenalty(file, board); //Pre: >=1 && <=(tileNumber/3)
+        populateFall(file, board); //Pre: >=1 && <=(tileNumber/3)
 
-        in.close();
+        file.close();
+    }
+
+    private void skipUntil(Scanner in, int boardNumber) {
+        for (int i=1; i<boardNumber; i++) {
+            in.nextLine();
+            skipLines(in,in.nextInt());
+            skipLines(in,in.nextInt());
+        }
+    }
+
+    private void skipLines(Scanner in, int lines) {
+        for (int i=0; i<=lines; i++) {in.nextLine();} //also skips the line from which the integer was read from
     }
 
     public int[] getBoard() {

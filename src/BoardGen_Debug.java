@@ -4,7 +4,8 @@ public class BoardGen_Debug {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         String path = in.nextLine().trim();
-        BoardGen board = new BoardGen(path);
+        int lines = in.nextInt();
+        BoardGen board = new BoardGen(path,lines);
         board.getBoard();
     }
 }
