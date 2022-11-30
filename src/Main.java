@@ -5,25 +5,27 @@
 */
 
 /* TODO
+DÚVIDAS:
+- Gameplay gere 1 jogo e Main gere o torneio? OU gameplay gere ambos?
+
+IMPLEMENTAR TORNEIO
 - J jogadores - J-1 jogos
 - Eliminar 1 jogador em cada jogo
-- Ganha o jogo quem atingir a última casa ou quem conseguir 6+3 na primeira jogada
-- Ganha o torneio quem for o único jogador
-- Multa com pena de 1-4 jogadas
-- 3 tipos de penalização - caranguejo, inferno (volta à 1ª casa) e morte (expulsa o jogador)
-    - Se alguém cair na morte o jogo continua excepto se só sobrar 1 jogador
+- Ganha o torneio quem for o único jogador vivo restante
+- Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
 - Tabela de classificação / comando classificação
     - 1º jogador eliminado é o último classificado, 2º o penúltimo etc etc
     - Dos vivos fica em primeiro quem tiver ganho mais jogos, em caso de empate é quem estiver mais perto da última casa, em caso de empate é quem joga primeiro
-- Boards.txt (SECA)
-    - não especifica o nº de tabuleiros (while….exception)
-- Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
+
+CONCLUÍDO
+v Boards.txt (SECA)
 
 - CORRIGIR (ERROS 1º PROJECTO)
-    - PRÉ-CONDIÇÕES MÉTODOS PÚBLICOS
+    - PRÉ-CONDIÇÕES MÉTODOS PÚBLICOS - fazer no fim
     - VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor)
  */
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main {
@@ -33,26 +35,27 @@ public class Main {
     private static final String CMD_STATUS = "status";
     private static final String CMD_DICE = "dice";
     private static final String CMD_EXIT = "exit";
+    //TODO comando classificação
+    private static final String BOARD_FILE_NAME = "boards.txt";
 
     /** MAIN
      * Receives input, processes the player order, creates the board, starts the interpreter
      */
-    public static void main(String[] args) {
+    // TODO alterar o input para esta ordem: ordemjogadores; numTabuleiro; comandos...; exit
+
+    public static void main(String[] args) throws FileNotFoundException {
         //Input start
         Scanner in = new Scanner(System.in);
 
         //Processes the player order
-        String playerOrder = in.next(); in.nextLine(); //Pre: 3 different capital letters
-
-        //Receives the number of tiles
-        int tileNumber = in.nextInt(); in.nextLine(); //Pre: >=10 && <=150
-
-        //Receives "special" tiles
-        int[] penaltyTiles = saveTileArray(in); //Pre: >=1 && <=(tileNumber/3)
-        int[] fallTiles = saveTileArray(in); //Pre: >=1 && <=(tileNumber/3)
+        String playerOrder = in.next(); in.nextLine(); //Pre: 3-10 different capital letters
 
         //Creates the board
-        Gameplay board = new Gameplay(playerOrder, tileNumber, penaltyTiles, fallTiles);
+        int boardNumber = in.nextInt();in.nextLine();
+        int[] board = new BoardGen(BOARD_FILE_NAME, boardNumber).getBoard();
+
+        //Starts a game
+        Gameplay game = new Gameplay(board, playerOrder);
 
         //Processes commands
         executeCmdLoop(board, in);
@@ -60,22 +63,6 @@ public class Main {
     }
 
     /* Methods */
-
-    /**
-     * Receives which tiles are "special" tiles and saves them into an array
-     * @param in - Scanner input
-     * pre: integer (array size) + \n + integers separated by space
-     * @return tileArray - array with each integer
-     */
-    private static int[] saveTileArray(Scanner in) {
-        int size = in.nextInt(); in.nextLine();
-        int[] tileArray = new int[size];
-        for (int i=0; i<size; i++) {
-            tileArray[i] = in.nextInt();
-        }
-        in.nextLine();
-        return tileArray;
-    }
 
     /** Command interpreter
      * Interprets and executes commands while cmd !=exit

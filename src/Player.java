@@ -4,6 +4,11 @@
  * Object with 3 variables stored: color (char), position (int), penalty (int)
  */
 
+/* TODO
+- Gravar no objecto Player o número de vitórias de um jogador e se este está vivo ou morto
+- Passar esses dados para as restantes classes
+ */
+
 public class Player {
     //Constants
     private static final int START_POSITION = 0;

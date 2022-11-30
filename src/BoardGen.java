@@ -4,6 +4,8 @@ import java.io.*;
 //Generates board from the text file
 //Constructor reads from file and generates an array
 //Array can be called using method getBoard()
+//TODO definir o path - "boards.txt" em vez de um path genérico (para já fica assim porque facilita a testagem)
+
 public class BoardGen {
     public static final int BIRD_TILE_MULT = 9; //defines a bird tile every N tiles
     public static final int INT_BIRD = 1; //bird tile
@@ -55,12 +57,20 @@ public class BoardGen {
         return board;
     }
 
+    /**
+     * Defines bird tiles every BIRD_TILE_MULT tiles
+     */
     private static void populateBird(int[] board) {
         for (int i=0; i < (board.length-1)/ BIRD_TILE_MULT; i++) {  //goes to C-1
             board[(i+1)*BIRD_TILE_MULT-1] = INT_BIRD;
         }
     }
 
+    /**
+     * Populates the board with penalty tiles
+     * The number of turns a player is penalized is saved in the tile as a NEGATIVE number
+     * Positive numbers are reserved for the other tiles
+     */
     private static void populatePenalty(Scanner in, int[] board) {
         int size = in.nextInt(); in.nextLine();
         for (int i=0; i<size; i++) {

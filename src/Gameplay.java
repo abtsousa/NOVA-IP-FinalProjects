@@ -6,6 +6,16 @@
  * Updates the position of each player after each turn
  */
 
+/* TODO
+ALTERAR JOGO
+- Criar método que dê reset ao jogo quando alguém ganha
+- Ganha o jogo quem atingir a última casa ou quem conseguir 6+3 na primeira jogada
+- Multa com pena de 1-4 jogadas
+- 3 tipos de penalização - caranguejo, inferno (volta à 1ª casa) e morte (expulsa o jogador)
+    - Se alguém cair na morte o jogo continua excepto se só sobrar 1 jogador
+- VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor) -- erro do 1º projecto
+ */
+
 public class Gameplay {
     //Constants
     private static final int NUMBER_OF_PLAYERS = 3;
@@ -34,6 +44,8 @@ public class Gameplay {
     public Gameplay(String playerOrder, int tileNumber, int[] penaltyTiles, int[] fallTiles) {
         this.tileNumber = tileNumber;
 
+        //TODO a maioria do que aqui está passa a ser feito pelo BoardGen e pode ser apagado até ter apenas 2 argumentos (playerOrder e board)
+
         //Initializes the board
         boardTiles = new char[tileNumber];
 
@@ -45,32 +57,6 @@ public class Gameplay {
         //Populates the player list in order of play and sets the first player to start
         players = populatePlayers(playerOrder);
         nextPlayer = 0;
-    }
-
-    /**
-     * Defines the birdTiles every BIRD_TILE_MULT tiles
-     * @return birdTiles - array with integers of each bird tile position
-     */
-    private int[] birdTiles() {
-        int[] birdTiles = new int[(tileNumber -1)/ BIRD_TILE_MULT]; //goes to C-1
-        for (int i=0; i < birdTiles.length; i++) {
-            birdTiles[i] = BIRD_TILE_MULT *(i+1);
-        }
-        return birdTiles;
-    }
-
-    /**
-     * Populates the board with "special" tiles
-     * Saves each special tile as a character in the tiles array
-     * @param c - the character defining each tile
-     *   pre: c == BIRD_CHAR || c == PENALTY_CHAR || c == FALL_CHAR
-     * @param tiles - the array that saves each tile's "type"
-     */
-    private void populateBoard(char c, int[] tiles) {
-        for (int i = 0; i < tiles.length; i++) {
-            int specialTile = tiles[i];
-            boardTiles[specialTile-1] = c; //special tile N is in array position N-1
-        }
     }
 
     /**
