@@ -7,14 +7,15 @@ import java.io.*;
 //TODO definir o path - "boards.txt" em vez de um path genérico (para já fica assim porque facilita a testagem)
 
 public class BoardGen {
-    public static final int BIRD_TILE_MULT = 9; //defines a bird tile every N tiles
+    public static final int BIRD_MULT = 9; //defines a bird tile every N tiles
     public static final int INT_BIRD = 1; //bird tile
-    public static final String FALL_CRAB = "crab";
+    private static final String FALL_CRAB = "crab";
     public static final int INT_FALL_CRAB = 2; //fall-crab tile
-    public static final String FALL_DEATH = "death";
-    public static final int INT_FALL_DEATH = 3; //fall-death character
-    public static final String FALL_HELL = "hell";
-    public static final int INT_FALL_HELL = 4; //fall-hell character
+    private static final String FALL_HELL = "hell";
+    public static final int INT_FALL_HELL = 3; //fall-hell character
+    private static final String FALL_DEATH = "death";
+    public static final int INT_FALL_DEATH = 4; //fall-death character
+
     //normal tiles are ZERO
     //penalty tiles are NEGATIVE NUMBERS (ex: -3 == penalty 3)
 
@@ -61,8 +62,8 @@ public class BoardGen {
      * Defines bird tiles every BIRD_TILE_MULT tiles
      */
     private static void populateBird(int[] board) {
-        for (int i=0; i < (board.length-1)/ BIRD_TILE_MULT; i++) {  //goes to C-1
-            board[(i+1)*BIRD_TILE_MULT-1] = INT_BIRD;
+        for (int i = 0; i < (board.length-1)/ BIRD_MULT; i++) {  //goes to C-1
+            board[(i+1)* BIRD_MULT -1] = INT_BIRD;
         }
     }
 
@@ -87,8 +88,8 @@ public class BoardGen {
             String type = in.nextLine().trim();
             switch (type) {
                 case FALL_CRAB: board[position]=INT_FALL_CRAB; break;
-                case FALL_DEATH: board[position]=INT_FALL_DEATH; break;
                 case FALL_HELL: board[position]=INT_FALL_HELL; break;
+                case FALL_DEATH: board[position]=INT_FALL_DEATH; break;
             }
         }
     }
