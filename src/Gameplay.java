@@ -94,8 +94,7 @@ public class Gameplay {
 
     /** Dice command
      * Rolls the dice and processes one turn
-     * @param diceResult - sum of the dice values
-     *   pre: diceResult == valid integer between 2 and 12
+     * TODO @param
      */
     //TODO método enorme - separar em métodos mais pequenos
     public void processNextTurn(int diceLow, int diceHigh) {
@@ -174,10 +173,26 @@ public class Gameplay {
         }
     }
 
+    //TODO pre
+    private void killPlayer(Player player) {
+        //TODO mata o jogador e retira-o do array alivePlayers mas o jogo continua EXCEPTO se alivePlayers.length==1
+    }
+
+    //TODO pre
+    private void resetGame() {
+        //TODO dá reset às posições, multas, deathOccurred e nextPlayer, mata o perdedor
+    }
+
     /**
      * @return boolean - is the tournament over?
      */
     public boolean isTournamentOver() {
         //TODO
+        return false;
+    }
+
+    public char getWinner() {
+        //TODO get cup winner
+        return '0';
     }
 }

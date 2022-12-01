@@ -6,7 +6,7 @@
 
 /* TODO
 - Gravar no objecto Player o número de vitórias de um jogador e se este está vivo ou morto
-- Passar esses dados para as restantes classes
+- Criar métodos para passar esses dados para as restantes classes
  */
 
 public class Player {
@@ -76,4 +76,15 @@ public class Player {
      * pre: penalty > 0
      */
     public void applyPenalty(int penalty) {this.penalty = penalty;}
+
+    //TODO pre
+    public void addPoint() {
+        //TODO
+    }
+
+    //TODO pre
+    public boolean isDead() {
+        //TODO
+        return false;
+    }
 }

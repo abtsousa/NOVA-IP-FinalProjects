@@ -22,7 +22,7 @@ v Boards.txt (SECA)
 
 - CORRIGIR (ERROS 1º PROJECTO)
     - PRÉ-CONDIÇÕES MÉTODOS PÚBLICOS - fazer no fim
-    - VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor)
+    v VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor)
  */
 
 import java.io.FileNotFoundException;
@@ -67,14 +67,14 @@ public class Main {
     /** Command interpreter
      * Interprets and executes commands while cmd !=exit
      * Prints output
-     * @param board - the game board
+     * @param game - the game state
      * @param in - Scanner input
      */
     private static void executeCmdLoop(Gameplay game, Scanner in) {
         String cmd, arg;
         do {
             cmd = in.next(); //command
-            arg = in.nextLine(); //argument
+            arg = in.nextLine().trim(); //argument
             switch (cmd) {
                 case CMD_PLAYER:
                     //invalidates the command if there's anything written after "player"
@@ -103,8 +103,8 @@ public class Main {
      */
     private static int[] splitArg(String arg) {
         String[] diceString = arg.split(" ");
-        int[] dice = new int[diceString.length-1]; //ignores the first element (space)
-        for (int i = 0; i < diceString.length-1; i++) {
+        int[] dice = new int[diceString.length];
+        for (int i = 0; i < diceString.length; i++) {
             dice[i] = Integer.valueOf(diceString[i+1]);
         }
         return dice;
@@ -112,11 +112,11 @@ public class Main {
 
     /** Player command
      * Prints the next player to roll the dice
-     * @param board - the game board
+     * @param game - the game state
      */
     private static void printNextPlayer(Gameplay game) {
-        if (game.isGameOver()) {
-            System.out.println("The game is over");1
+        if (game.isTournamentOver()) {
+            System.out.println("The cup is over");
         } else {
             System.out.printf("Next to play: %c\n", game.getNextPlayer());
         }
@@ -124,18 +124,19 @@ public class Main {
 
     /** Square command
      * Prints the position (tile) of the requested player
-     * @param board - the game board
+     * @param game - the game state
      * @param player - the requested player's color
      */
     private static void printPlayerSquare(Gameplay game, String player) {
-        if (player.length()!=2) { //space + 1 character, otherwise invalid player
+        if (player.length()!=1) { //1 character, otherwise invalid player
             System.out.println("Nonexistent player");
         } else {
-            char color = player.charAt(1);
+            char color = player.charAt(0);
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
             } else {
+                //TODO check if player is dead - "Eliminated player"
                 //The position P of the player object corresponds to the square P+1
                 System.out.printf("%c is on square %d\n", color, game.getPlayerSquare(index) + 1);
             }
@@ -144,19 +145,20 @@ public class Main {
 
     /** Status command
      * Prints if the requested player can roll the dice when it's their turn
-     * @param board - the game board
+     * @param game - the game state
      * @param player - the requested player's color
      */
     private static void printPlayerStatus(Gameplay game, String player) {
-        if (player.length()!=2) { //space + 1 character, otherwise invalid player
+        if (player.length()!=1) { //1 character, otherwise invalid player
             System.out.println("Nonexistent player");
         } else {
-            char color = player.charAt(1);
+            char color = player.charAt(0);
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
-            } else if (game.isGameOver()) {
-                System.out.println("The game is over");
+                //TODO check for "Eliminated player"
+            } else if (game.isTournamentOver()) {
+                System.out.println("The cup is over");
             } else if (game.getPlayerStatus(index)) {
                 System.out.printf("%c can roll the dice\n", color);
             } else {
@@ -165,9 +167,12 @@ public class Main {
         }
     }
 
+    //TODO comando-ranking
+    //...
+
     /** Dice command
      * Processes if the dice roll is valid and updates the board accordingly
-     * @param board - the game board
+     * @param game - the game state
      * @param dice1 - the first dice's value
      * @param dice2 - the second dice's value
      */
@@ -178,8 +183,8 @@ public class Main {
 
         if (diceLow<1 || diceHigh > 6) {
             System.out.println("Invalid dice");
-        } else if (game.isGameOver()) {
-            System.out.println("The game is over");
+        } else if (game.isTournamentOver()) {
+            System.out.println("The cup is over");
         } else {
             game.processNextTurn(diceLow, diceHigh);
         }
@@ -187,13 +192,13 @@ public class Main {
 
     /** Exit command
      * Checks if the game is over and prints who won (if available)
-     * @param board - the game board
+     * @param game - the game state
      */
     private static void printExitStatus(Gameplay game) {
-        if (game.isGameOver()) {
-            System.out.printf("%c won the game!\n",game.getWinner());
+        if (game.isTournamentOver()) {
+            System.out.printf("%c won the cup!\n",game.getWinner()); //TODO get cup winner
         } else {
-            System.out.println("The game was not over yet...");
+            System.out.println("The cup was not over yet...");
         }
     }
 }
