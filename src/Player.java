@@ -31,13 +31,13 @@ public class Player {
      * @param color - character representing the player's color
      * pre: color must be a unique capital letter
      */
-    public Player(char color) {
+    public Player(char color, int order) {
         this.color = color;
         this.position = START_POSITION; //assumes default position
         this.penalty = START_PENALTY; //assumes default penallty
-        this.penalty = START_SCORE; //assumes default score
+        this.score = START_SCORE; //assumes default score
         this.isAlive = START_ISALIVE; //assumes default isAlive
-
+        this.order = order;
     }
 
     /** Getters
@@ -105,5 +105,37 @@ public class Player {
     //TODO pre - Verificar a necessidade deste método
     public boolean isDead() {
         return !this.isAlive;
+    }
+
+
+
+    /**
+     * Compares Player's score
+     */
+    private int compareScore (Player other)  {
+        return score-other.getScore();
+    }
+
+    /**
+     * Compares Player's posiion
+     */
+    private int comparePosition (Player other)  {
+        return position-other.getPosition();
+    }
+
+    private int comparePlayOrder(Player other) {
+        return other.getOrder()-order;
+    }
+
+    public int nestedCompare(Player other) {
+        if (compareAlive(other)!=0) {
+            return compareAlive(other);
+        } else if (compareScore(other)!=0) {
+            return compareScore(other);
+        } else if (comparePosition(other)!=0) {
+            return comparePosition(other); //ordem crescente
+        } else {
+            return comparePlayOrder(other);
+        }
     }
 }

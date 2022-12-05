@@ -13,9 +13,10 @@ IMPLEMENTAR TORNEIO
 - Eliminar 1 jogador em cada jogo
 - Ganha o torneio quem for o único jogador vivo restante
 - Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
-- Tabela de classificação / comando classificação
+v Tabela de classificação / comando classificação
+    - CONVERTER ISALIVE BOOLEAN PARA INT
     - 1º jogador eliminado é o último classificado, 2º o penúltimo etc etc
-    - Dos vivos fica em primeiro quem tiver ganho mais jogos, em caso de empate é quem estiver mais perto da última casa, em caso de empate é quem joga primeiro
+    v Dos vivos fica em primeiro quem tiver ganho mais jogos, em caso de empate é quem estiver mais perto da última casa, em caso de empate é quem joga primeiro
 
 CONCLUÍDO
 v Boards.txt (SECA)
@@ -83,7 +84,7 @@ public class Main {
                     break;
                 case CMD_SQUARE: printPlayerSquare(game, arg); break;
                 case CMD_STATUS: printPlayerStatus(game, arg); break;
-                case CMD_RANKING: printPlayerRanking(game, arg); break;
+                case CMD_RANKING: printPlayerRanking(game); break;
                 case CMD_DICE:
                     int[] dice = splitArg(arg); //Pre: 2 integers
                     rollDice(game, dice[0], dice[1]);
@@ -170,7 +171,16 @@ public class Main {
     }
 
     //TODO comando-ranking
-    private static void printPlayerRanking(Gameplay game, String player)    {
+    private static void printPlayerRanking(Gameplay game) {
+        PlayerIterator it = game.rankIt();
+        while (it.hasNext()) { //Run iterator
+            Player pl = it.next();
+            if (pl.isAlive()) {
+                System.out.printf("%c: %d games won; on square %d.\n", pl.getColor(), pl.getScore(), pl.getPosition());
+            } else {
+                System.out.printf("%c: %d games won; eliminated.\n", pl.getColor(), pl.getScore());
+            }
+        }
 
     }
 

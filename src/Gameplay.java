@@ -24,7 +24,7 @@ public class Gameplay {
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
     private final int[] board; //tile array, saves each tile's "type"
-    private  Player[] alivePlayers; //players array in order
+    private  Player[] players; //players array in order
     private int size; //number of alive players
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
@@ -38,9 +38,9 @@ public class Gameplay {
         lastTile = board.length-1;
 
         //Populates the player list in order of play and sets the first player to start
-        alivePlayers = populatePlayers(playerOrder);
+        players = populatePlayers(playerOrder);
         nextPlayer = 0;
-        size= alivePlayers.length;
+        size = players.length;
     }
 
     /**
@@ -52,7 +52,7 @@ public class Gameplay {
         Player[] players = new Player[playerOrder.length];
         for (int i=0; i<playerOrder.length; i++) {
             char playerColor = playerOrder[i];
-            players[i] = new Player(playerColor);
+            players[i] = new Player(playerColor, i);
             }
         return players;
     }
@@ -64,8 +64,8 @@ public class Gameplay {
      * @return -1 if no player found
      */
     public int searchPlayer(char searchColor) {
-        int i=alivePlayers.length-1;
-        while ( i>=0 && searchColor != alivePlayers[i].getColor() ) {
+        int i= players.length-1;
+        while ( i>=0 && searchColor != players[i].getColor() ) {
             i--;
         }
         return i; //if not found ==> i=-1;
@@ -76,7 +76,7 @@ public class Gameplay {
      * @return color of the next player to roll the dice
      */
     public char getNextPlayer() {
-        return alivePlayers[nextPlayer].getColor();
+        return players[nextPlayer].getColor();
     }
 
     /** Square command
@@ -84,7 +84,7 @@ public class Gameplay {
      * @return position of the requested player
      */
     public int getPlayerSquare(int index) {
-        return alivePlayers[index].getPosition();
+        return players[index].getPosition();
     }
 
     /** Status command
@@ -92,11 +92,11 @@ public class Gameplay {
      * @return boolean - can the requested player roll the dice when it's their turn?
      */
     public boolean getPlayerStatus(int index) {
-        return alivePlayers[index].canRollDice();
+        return players[index].canRollDice();
     }
 
     public boolean getPlayerHealth(int index) {
-        return alivePlayers[index].canPlay();
+        return players[index].isAlive();
     }
     /** Dice command
      * Rolls the dice and processes one turn
@@ -104,7 +104,7 @@ public class Gameplay {
      */
     //TODO método enorme - separar em métodos mais pequenos
     public void processNextTurn(int diceLow, int diceHigh) {
-        Player player = alivePlayers[nextPlayer];
+        Player player = players[nextPlayer];
         int position = player.getPosition();
         int nextPosition, diceResult;
 
@@ -128,7 +128,7 @@ public class Gameplay {
                     break;
                 case BoardGen.INT_FALL_DEATH: //death tile
                     if (!deathOccurred) {
-                        killPlayer(player); //TODO mata o jogador e retira-o do array alivePlayers mas o jogo continua EXCEPTO se alivePlayers.length==1
+                        player.kill();
                         deathOccurred = true;
                     }
                     break;
@@ -163,7 +163,7 @@ public class Gameplay {
      */
     private void passTurn() {
         nextPlayer++;
-        if (nextPlayer>=alivePlayers.length) {nextPlayer=0;}
+        if (nextPlayer>= players.length) {nextPlayer=0;}
         checkTurnSkip(); //checks if next player has a penalty
     }
 
@@ -172,31 +172,12 @@ public class Gameplay {
      * Skips their turn if they are and lowers their penalty by 1
      */
     private void checkTurnSkip() {
-        Player player = alivePlayers[nextPlayer];
+        Player player = players[nextPlayer];
         if (!player.canRollDice()) { //if the player cannot play
             player.lowerPenalty(); //lower their penalty by 1
             passTurn();
         }
     }
-
-    //TODO pre
-    private void killPlayer(Player player) {
-        //TODO mata o jogador e retira-o do array alivePlayers mas o jogo continua EXCETO se alivePlayers.length==1
-        player = alivePlayers[nextPlayer];
-
-        for (int i = searchPlayer(player.getColor()); i < size - 1; i++) {
-            alivePlayers[i] = alivePlayers[i + 1]; // shift to the left
-        }
-
-        size--;
-
-        Player[] tmp = new Player[size];
-        for (int i = 0; i < size; i++) {
-            tmp[i] = alivePlayers[i];
-        }
-        alivePlayers = tmp;
-    }
-
 
     //TODO pre
     private void resetGame() {
@@ -213,6 +194,50 @@ public class Gameplay {
 
     public char getWinner() {
         //TODO get cup winner
+        //Pre alivePlayers=1
+        //Quando aliveplayers.length==1 guarda o valor do vencedor e devolve-o através deste método
         return '0';
+    }
+
+    //Call iterator
+    public PlayerIterator iterator() {
+        return new PlayerIterator(players, size);
+    }
+
+    //RANKING - Sortered iterator
+    public PlayerIterator rankIt() {
+        Player[] rankedPlayers = new Player[size];
+        for (int i = 0; i < size; i++) {
+            rankedPlayers[i] = players[i];
+        }
+        sort(rankedPlayers, size);
+        return new PlayerIterator(rankedPlayers, size);
+    }
+
+    //ALIVE - Filtered iterator
+    public PlayerIterator aliveIt() {
+        Player[] alivePlayers = new Player[size]; //TODO mudar size para apenas o nº de jogadores vivos (vs todos)
+        int j=0;
+        for (int i = 0; i < size; i++) {
+            if (players[i].isAlive()) { //condição
+                alivePlayers[j++] = players[i];
+            }
+        }
+        return new PlayerIterator(alivePlayers, j);
+    }
+
+
+    private void sort(Player[] list, int size) {
+        for (int i=0; i < size-1; i++) {
+            int idx = i;
+            for (int j=i+1; j< size; j++) {
+                if (list[j].nestedCompare(list[idx]) > 0) {
+                    idx = j;
+                }
+            }
+            Player tmp = list[i];
+            list[i] = list[idx];
+            list[idx] = tmp;
+        }
     }
 }
