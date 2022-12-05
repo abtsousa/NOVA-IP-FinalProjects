@@ -182,6 +182,15 @@ public class Gameplay {
     //TODO pre
     private void resetGame() {
         //TODO dá reset às posições, multas, deathOccurred e nextPlayer, mata o perdedor
+        nextPlayer=0; // resets to 1st player
+        deathOccurred=false; // resets deathOccurred
+        PlayerIterator it = iterator();
+        while (it.hasNext()) {
+            Player player = it.next();
+            player.movePlayer(0);
+            player.applyPenalty(0);
+        }
+
     }
 
     /**

@@ -5,9 +5,11 @@
 */
 
 /* TODO
-DÚVIDAS:
-- Gameplay gere 1 jogo e Main gere o torneio? OU gameplay gere ambos?
 
+CRISTÓVÃO
+- Acabar RESET
+- Matar ultimo jogador vivo se nao houver morto
+- Acabar o jogo qd há 1 vivo
 IMPLEMENTAR TORNEIO
 - J jogadores - J-1 jogos
 - Eliminar 1 jogador em cada jogo

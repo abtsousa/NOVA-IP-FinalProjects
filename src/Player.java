@@ -23,6 +23,7 @@ public class Player {
     private int penalty; //Pre: >=0
     private int score; //Pre: >=0
     private boolean isAlive;
+    private int order; //Pre: >0
 
     //Constructor
 
@@ -64,7 +65,8 @@ public class Player {
     /**
      * @return boolean - if the player can play
      */
-    public boolean canPlay() {return isAlive;}
+    public boolean isAlive() {return isAlive;}
+
     /**
      * @return boolean - if the player can roll the dice
      */
@@ -72,6 +74,10 @@ public class Player {
         return penalty==0;
     }
 
+    /**
+     * @return int - the player's creation order
+     */
+    public int getOrder()   {return order;}
 
     /**
      * Updates the player's position
@@ -102,9 +108,24 @@ public class Player {
      */
     public void addPoint() {this.score++;}
 
-    //TODO pre - Verificar a necessidade deste método
-    public boolean isDead() {
-        return !this.isAlive;
+    /**
+     * Stops player from playing
+     */
+    public void kill() {
+        isAlive=false;
+    }
+
+    /**
+     * Compares Player's isAlive status
+     */
+    private int compareAlive (Player other)  {
+        if (isAlive==other.isAlive()) {
+            return 0;
+        } else if (isAlive)   {
+            return 1;
+        }  else {
+            return -1;
+        }
     }
 
 
