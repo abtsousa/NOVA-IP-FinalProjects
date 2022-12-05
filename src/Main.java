@@ -35,7 +35,7 @@ public class Main {
     private static final String CMD_STATUS = "status";
     private static final String CMD_DICE = "dice";
     private static final String CMD_EXIT = "exit";
-    //TODO comando classificação
+    private static final String CMD_RANKING = "ranking";
     private static final String BOARD_FILE_NAME = "boards.txt";
 
     /** MAIN
@@ -83,7 +83,7 @@ public class Main {
                     break;
                 case CMD_SQUARE: printPlayerSquare(game, arg); break;
                 case CMD_STATUS: printPlayerStatus(game, arg); break;
-                //TODO comando ranking
+                case CMD_RANKING: printPlayerRanking(game, arg); break;
                 case CMD_DICE:
                     int[] dice = splitArg(arg); //Pre: 2 integers
                     rollDice(game, dice[0], dice[1]);
@@ -135,8 +135,9 @@ public class Main {
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
+            } else if (!game.getPlayerHealth(index))    {
+                System.out.println("Eliminated player");
             } else {
-                //TODO check if player is dead - "Eliminated player"
                 //The position P of the player object corresponds to the square P+1
                 System.out.printf("%c is on square %d\n", color, game.getPlayerSquare(index) + 1);
             }
@@ -156,9 +157,10 @@ public class Main {
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
-                //TODO check for "Eliminated player"
             } else if (game.isTournamentOver()) {
                 System.out.println("The cup is over");
+            }   else if (!game.getPlayerHealth(index))  {
+                System.out.println("Eliminated player");
             } else if (game.getPlayerStatus(index)) {
                 System.out.printf("%c can roll the dice\n", color);
             } else {
@@ -168,7 +170,10 @@ public class Main {
     }
 
     //TODO comando-ranking
-    //...
+    private static void printPlayerRanking(Gameplay game, String player)    {
+
+    }
+
 
     /** Dice command
      * Processes if the dice roll is valid and updates the board accordingly

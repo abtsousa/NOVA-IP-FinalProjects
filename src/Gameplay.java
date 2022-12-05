@@ -1,5 +1,6 @@
 /** BOARD CLASS (SYSTEM)
  * @author Afonso Brás Sousa
+ * @author Alexandre Cristóvão
  * Starts the game and manages the game state
  * Defines the format of the board, how many tiles and which are "special"
  * Defines 3 players and their playing order
@@ -23,7 +24,8 @@ public class Gameplay {
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
     private final int[] board; //tile array, saves each tile's "type"
-    private final Player[] alivePlayers; //players array in order
+    private  Player[] alivePlayers; //players array in order
+    private int size; //number of alive players
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
 
@@ -38,6 +40,7 @@ public class Gameplay {
         //Populates the player list in order of play and sets the first player to start
         alivePlayers = populatePlayers(playerOrder);
         nextPlayer = 0;
+        size= alivePlayers.length;
     }
 
     /**
@@ -89,9 +92,12 @@ public class Gameplay {
      * @return boolean - can the requested player roll the dice when it's their turn?
      */
     public boolean getPlayerStatus(int index) {
-        return alivePlayers[index].canPlay();
+        return alivePlayers[index].canRollDice();
     }
 
+    public boolean getPlayerHealth(int index) {
+        return alivePlayers[index].canPlay();
+    }
     /** Dice command
      * Rolls the dice and processes one turn
      * TODO @param
@@ -167,7 +173,7 @@ public class Gameplay {
      */
     private void checkTurnSkip() {
         Player player = alivePlayers[nextPlayer];
-        if (!player.canPlay()) { //if the player cannot play
+        if (!player.canRollDice()) { //if the player cannot play
             player.lowerPenalty(); //lower their penalty by 1
             passTurn();
         }
@@ -175,8 +181,22 @@ public class Gameplay {
 
     //TODO pre
     private void killPlayer(Player player) {
-        //TODO mata o jogador e retira-o do array alivePlayers mas o jogo continua EXCEPTO se alivePlayers.length==1
+        //TODO mata o jogador e retira-o do array alivePlayers mas o jogo continua EXCETO se alivePlayers.length==1
+        player = alivePlayers[nextPlayer];
+
+        for (int i = searchPlayer(player.getColor()); i < size - 1; i++) {
+            alivePlayers[i] = alivePlayers[i + 1]; // shift to the left
+        }
+
+        size--;
+
+        Player[] tmp = new Player[size];
+        for (int i = 0; i < size; i++) {
+            tmp[i] = alivePlayers[i];
+        }
+        alivePlayers = tmp;
     }
+
 
     //TODO pre
     private void resetGame() {

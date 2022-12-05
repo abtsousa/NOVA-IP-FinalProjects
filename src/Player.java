@@ -1,5 +1,6 @@
 /** PLAYER CLASS
  * @author Afonso Brás Sousa
+ * @author Alexandre Cristóvão
  * Initializes each player
  * Object with 3 variables stored: color (char), position (int), penalty (int)
  */
@@ -13,11 +14,15 @@ public class Player {
     //Constants
     private static final int START_POSITION = 0;
     private static final int START_PENALTY = 0;
+    private static final int START_SCORE = 0;
+    private static final boolean START_ISALIVE = true;
 
     //Variables that define each player
     private final char color; //Pre: unique character ('A' - 'Z')
     private int position; //Pre: >=0 && <=Board.tileNumber-1
     private int penalty; //Pre: >=0
+    private int score; //Pre: >=0
+    private boolean isAlive;
 
     //Constructor
 
@@ -30,6 +35,9 @@ public class Player {
         this.color = color;
         this.position = START_POSITION; //assumes default position
         this.penalty = START_PENALTY; //assumes default penallty
+        this.penalty = START_SCORE; //assumes default score
+        this.isAlive = START_ISALIVE; //assumes default isAlive
+
     }
 
     /** Getters
@@ -47,11 +55,23 @@ public class Player {
     }
 
     /**
+     * @return int - the player's score
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
      * @return boolean - if the player can play
      */
-    public boolean canPlay() {
+    public boolean canPlay() {return isAlive;}
+    /**
+     * @return boolean - if the player can roll the dice
+     */
+    public boolean canRollDice() {
         return penalty==0;
     }
+
 
     /**
      * Updates the player's position
@@ -77,14 +97,13 @@ public class Player {
      */
     public void applyPenalty(int penalty) {this.penalty = penalty;}
 
-    //TODO pre
-    public void addPoint() {
-        //TODO
-    }
+    /**
+     * Adds a point to the player's score
+     */
+    public void addPoint() {this.score++;}
 
-    //TODO pre
+    //TODO pre - Verificar a necessidade deste método
     public boolean isDead() {
-        //TODO
-        return false;
+        return !this.isAlive;
     }
 }
