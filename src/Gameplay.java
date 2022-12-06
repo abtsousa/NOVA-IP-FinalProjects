@@ -173,9 +173,13 @@ public class Gameplay {
      */
     private void checkTurnSkip() {
         Player player = players[nextPlayer];
-        if (!player.canRollDice()) { //if the player cannot play
-            player.lowerPenalty(); //lower their penalty by 1
+        if (!player.isAlive()) { //if the player is dead
             passTurn();
+        } else {
+            if (!player.canRollDice()) { //if the player has any penalty
+                player.lowerPenalty(); //lower their penalty by 1
+                passTurn();
+            }
         }
     }
 
@@ -190,7 +194,6 @@ public class Gameplay {
             player.movePlayer(0);
             player.applyPenalty(0);
         }
-
     }
 
     /**

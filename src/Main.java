@@ -7,7 +7,7 @@
 /* TODO
 
 CRISTÓVÃO
-- Acabar RESET
+- Acabar RESET DONE?
 - Matar ultimo jogador vivo se nao houver morto
 - Acabar o jogo qd há 1 vivo
 IMPLEMENTAR TORNEIO

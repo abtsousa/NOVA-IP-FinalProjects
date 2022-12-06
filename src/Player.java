@@ -128,8 +128,6 @@ public class Player {
         }
     }
 
-
-
     /**
      * Compares Player's score
      */
