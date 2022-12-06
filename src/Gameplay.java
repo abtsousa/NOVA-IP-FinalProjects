@@ -9,7 +9,7 @@
 
 /* TODO (v = done)
 ALTERAR JOGO
-- Criar método que dê reset ao jogo quando alguém ganha
+v Criar método que dê reset ao jogo quando alguém ganha
 v Ganha o jogo quem atingir a última casa ou quem conseguir 6+3 na primeira jogada
 v Multa com pena de 1-4 jogadas
 v 3 tipos de penalização - caranguejo, inferno (volta à 1ª casa) e morte (expulsa o jogador)
@@ -28,6 +28,9 @@ public class Gameplay {
     private int size; //number of alive players
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
+    private int turnNumber;
+    private int gamesPlayed;
+    private boolean cupOver;
 
     /** Constructor
      * Defines the inicial board state
@@ -109,7 +112,7 @@ public class Gameplay {
         int nextPosition, diceResult;
 
         //Movement start
-        if (position == 1 && diceLow == 3 && diceHigh == 6) { //special case - instant win
+        if (turnNumber < size - gamesPlayed && diceLow == 3 && diceHigh == 6) { //special case - instant win //TODO pode estar na posição 0 sem ser a 1ª jogada
             nextPosition = lastTile;
         } else {
             diceResult = diceLow + diceHigh;
@@ -128,8 +131,14 @@ public class Gameplay {
                     break;
                 case BoardGen.INT_FALL_DEATH: //death tile
                     if (!deathOccurred) {
-                        player.kill();
+                        player.kill(gamesPlayed);
                         deathOccurred = true;
+                        if (size - gamesPlayed == 2) { //if there were only 2 alive players left
+                            cupOver = true;
+                            int winner = searchPlayer(getWinner());
+                            players[winner].addPoint();
+                            gamesPlayed++;
+                        }
                     }
                     break;
             }
@@ -138,14 +147,30 @@ public class Gameplay {
                 int penalty = type*-1;
                 player.applyPenalty(penalty);
             }
+            turnNumber++;
         }
 
+        player.movePlayer(nextPosition); //TODO move mesmo que o jogador seja morto
+
         //TODO este check fica aqui ou fica no movePlayer? Ou no passTurn? Ou num método à parte -- acho a última a melhor
+
         if (nextPosition == lastTile) { //checks for winner
-            player.addPoint(); //TODO
-            resetGame(); //TODO dá reset às posições, multas, deathOccurred e nextPlayer, mata o perdedor
+            player.addPoint();
+
+            if (!deathOccurred) {
+                Player lastPlayer = aliveIt().next();
+                lastPlayer.kill(gamesPlayed);
+            }
+
+            gamesPlayed++;
+
+            if (gamesPlayed < size - 1) {
+                resetGame();
+            } else {
+                cupOver = true;
+            }
+
         } else {
-            player.movePlayer(nextPosition); //TODO move mesmo que o jogador seja morto
             passTurn();
         }
     }
@@ -187,6 +212,7 @@ public class Gameplay {
     private void resetGame() {
         //TODO dá reset às posições, multas, deathOccurred e nextPlayer, mata o perdedor
         nextPlayer=0; // resets to 1st player
+        while (players[nextPlayer].getDeathOrder()!=0) {nextPlayer++;}
         deathOccurred=false; // resets deathOccurred
         PlayerIterator it = iterator();
         while (it.hasNext()) {
@@ -197,11 +223,10 @@ public class Gameplay {
     }
 
     /**
-     * @return boolean - is the tournament over?
+     * @return boolean - is the cup over?
      */
-    public boolean isTournamentOver() {
-        //TODO
-        return false;
+    public boolean isCupOver() {
+        return cupOver;
     }
 
     public char getWinner() {
@@ -226,15 +251,16 @@ public class Gameplay {
         return new PlayerIterator(rankedPlayers, size);
     }
 
-    //ALIVE - Filtered iterator
+    //ALIVE - Filtered and sortered iterator
     public PlayerIterator aliveIt() {
-        Player[] alivePlayers = new Player[size]; //TODO mudar size para apenas o nº de jogadores vivos (vs todos)
+        Player[] alivePlayers = new Player[size - gamesPlayed]; //morre 1 jogador por cada jogo
         int j=0;
         for (int i = 0; i < size; i++) {
-            if (players[i].isAlive()) { //condição
+            if (players[i].getDeathOrder()==0) { //check for condition
                 alivePlayers[j++] = players[i];
             }
         }
+        sortAlive(alivePlayers, size - gamesPlayed);
         return new PlayerIterator(alivePlayers, j);
     }
 
@@ -243,7 +269,22 @@ public class Gameplay {
         for (int i=0; i < size-1; i++) {
             int idx = i;
             for (int j=i+1; j< size; j++) {
-                if (list[j].nestedCompare(list[idx]) > 0) {
+                if (list[j].rankedCompare(list[idx]) > 0) {
+                    idx = j;
+                }
+            }
+            Player tmp = list[i];
+            list[i] = list[idx];
+            list[idx] = tmp;
+        }
+    }
+
+    //sorts alive players by position on the board
+    private void sortAlive(Player[] list, int size) {
+        for (int i=0; i < size-1; i++) {
+            int idx = i;
+            for (int j=i+1; j< size; j++) {
+                if (list[j].aliveCompare(list[idx]) < 0) {
                     idx = j;
                 }
             }

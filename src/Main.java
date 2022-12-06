@@ -11,9 +11,9 @@ CRISTÓVÃO
 - Matar ultimo jogador vivo se nao houver morto
 - Acabar o jogo qd há 1 vivo
 IMPLEMENTAR TORNEIO
-- J jogadores - J-1 jogos
-- Eliminar 1 jogador em cada jogo
-- Ganha o torneio quem for o único jogador vivo restante
+v J jogadores - J-1 jogos
+v Eliminar 1 jogador em cada jogo
+v Ganha o torneio quem for o único jogador vivo restante
 - Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
 v Tabela de classificação / comando classificação
     - CONVERTER ISALIVE BOOLEAN PARA INT
@@ -44,7 +44,6 @@ public class Main {
     /** MAIN
      * Receives input, processes the player order, creates the board, starts the interpreter
      */
-    // TODO alterar o input para esta ordem: ordemjogadores; numTabuleiro; comandos...; exit
 
     public static void main(String[] args) throws FileNotFoundException {
         //Input start
@@ -108,7 +107,7 @@ public class Main {
         String[] diceString = arg.split(" ");
         int[] dice = new int[diceString.length];
         for (int i = 0; i < diceString.length; i++) {
-            dice[i] = Integer.valueOf(diceString[i+1]);
+            dice[i] = Integer.valueOf(diceString[i]);
         }
         return dice;
     }
@@ -118,7 +117,7 @@ public class Main {
      * @param game - the game state
      */
     private static void printNextPlayer(Gameplay game) {
-        if (game.isTournamentOver()) {
+        if (game.isCupOver()) {
             System.out.println("The cup is over");
         } else {
             System.out.printf("Next to play: %c\n", game.getNextPlayer());
@@ -160,7 +159,7 @@ public class Main {
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
-            } else if (game.isTournamentOver()) {
+            } else if (game.isCupOver()) {
                 System.out.println("The cup is over");
             }   else if (!game.getPlayerHealth(index))  {
                 System.out.println("Eliminated player");
@@ -200,7 +199,7 @@ public class Main {
 
         if (diceLow<1 || diceHigh > 6) {
             System.out.println("Invalid dice");
-        } else if (game.isTournamentOver()) {
+        } else if (game.isCupOver()) {
             System.out.println("The cup is over");
         } else {
             game.processNextTurn(diceLow, diceHigh);
@@ -212,8 +211,8 @@ public class Main {
      * @param game - the game state
      */
     private static void printExitStatus(Gameplay game) {
-        if (game.isTournamentOver()) {
-            System.out.printf("%c won the cup!\n",game.getWinner()); //TODO get cup winner
+        if (game.isCupOver()) {
+            System.out.printf("%c won the cup!\n",game.getWinner());
         } else {
             System.out.println("The cup was not over yet...");
         }

@@ -15,7 +15,7 @@ public class Player {
     private static final int START_POSITION = 0;
     private static final int START_PENALTY = 0;
     private static final int START_SCORE = 0;
-    private static final boolean START_ISALIVE = true;
+    private static final int START_DEATHORDER = 0;
 
     //Variables that define each player
     private final char color; //Pre: unique character ('A' - 'Z')
@@ -37,8 +37,8 @@ public class Player {
         this.position = START_POSITION; //assumes default position
         this.penalty = START_PENALTY; //assumes default penallty
         this.score = START_SCORE; //assumes default score
-        this.isAlive = START_ISALIVE; //assumes default isAlive
-        this.order = order;
+        this.deathOrder = START_DEATHORDER; //assumes deathOrder as 0
+        this.playOrder = order;
     }
 
     /** Getters
@@ -65,7 +65,7 @@ public class Player {
     /**
      * @return boolean - if the player can play
      */
-    public boolean isAlive() {return isAlive;}
+    public int getDeathOrder() {return deathOrder;}
 
     /**
      * @return boolean - if the player can roll the dice
@@ -77,7 +77,7 @@ public class Player {
     /**
      * @return int - the player's creation order
      */
-    public int getOrder()   {return order;}
+    public int getPlayOrder()   {return playOrder;}
 
     /**
      * Updates the player's position
@@ -111,21 +111,16 @@ public class Player {
     /**
      * Stops player from playing
      */
-    public void kill() {
-        isAlive=false;
+    public void kill(int gamesPlayed) {
+        deathOrder = (gamesPlayed+1)*-1;
     }
 
     /**
      * Compares Player's isAlive status
      */
     private int compareAlive (Player other)  {
-        if (isAlive==other.isAlive()) {
-            return 0;
-        } else if (isAlive)   {
-            return 1;
-        }  else {
-            return -1;
-        }
+        if (deathOrder < 0 && other.deathOrder < 0) {return other.getDeathOrder() - deathOrder;}
+        else {return deathOrder - other.getDeathOrder();}
     }
 
     /**
@@ -138,12 +133,12 @@ public class Player {
     /**
      * Compares Player's posiion
      */
-    private int comparePosition (Player other)  {
+    public int comparePosition (Player other)  {
         return position-other.getPosition();
     }
 
     private int comparePlayOrder(Player other) {
-        return other.getOrder()-order;
+        return other.getPlayOrder()-playOrder; //ordem inversa
     }
 
     public int nestedCompare(Player other) {
@@ -152,9 +147,15 @@ public class Player {
         } else if (compareScore(other)!=0) {
             return compareScore(other);
         } else if (comparePosition(other)!=0) {
-            return comparePosition(other); //ordem crescente
+            return comparePosition(other);
         } else {
             return comparePlayOrder(other);
         }
+    }
+
+    public int aliveCompare(Player other) {
+        if (comparePosition(other)!=0) {
+            return comparePosition(other);
+        } else return comparePlayOrder(other);
     }
 }
