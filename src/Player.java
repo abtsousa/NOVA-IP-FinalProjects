@@ -22,8 +22,8 @@ public class Player {
     private int position; //Pre: >=0 && <=Board.tileNumber-1
     private int penalty; //Pre: >=0
     private int score; //Pre: >=0
-    private boolean isAlive;
-    private int order; //Pre: >0
+    private int deathOrder; //Pre: >=1
+    private int playOrder; //Pre: >0
 
     //Constructor
 
@@ -116,7 +116,7 @@ public class Player {
     }
 
     /**
-     * Compares Player's isAlive status
+     * Compares Player's deathOrder status
      */
     private int compareAlive (Player other)  {
         if (deathOrder < 0 && other.deathOrder < 0) {return other.getDeathOrder() - deathOrder;}
@@ -140,8 +140,8 @@ public class Player {
     private int comparePlayOrder(Player other) {
         return other.getPlayOrder()-playOrder; //ordem inversa
     }
-
-    public int nestedCompare(Player other) {
+//TODO mudar nome para compareDeathOrderx
+    public int rankedCompare(Player other) {
         if (compareAlive(other)!=0) {
             return compareAlive(other);
         } else if (compareScore(other)!=0) {

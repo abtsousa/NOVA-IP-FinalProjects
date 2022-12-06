@@ -24,7 +24,7 @@ public class Gameplay {
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
     private final int[] board; //tile array, saves each tile's "type"
-    private  Player[] players; //players array in order
+    private Player[] players; //players array in order
     private int size; //number of alive players
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
@@ -44,6 +44,9 @@ public class Gameplay {
         players = populatePlayers(playerOrder);
         nextPlayer = 0;
         size = players.length;
+        gamesPlayed = 0;
+        turnNumber = 0;
+        cupOver = false;
     }
 
     /**
@@ -98,8 +101,8 @@ public class Gameplay {
         return players[index].canRollDice();
     }
 
-    public boolean getPlayerHealth(int index) {
-        return players[index].isAlive();
+    public int getPlayerHealth(int index) {
+        return players[index].getDeathOrder();
     }
     /** Dice command
      * Rolls the dice and processes one turn
@@ -198,7 +201,7 @@ public class Gameplay {
      */
     private void checkTurnSkip() {
         Player player = players[nextPlayer];
-        if (!player.isAlive()) { //if the player is dead
+        if (player.getDeathOrder()!=0) { //if the player is dead
             passTurn();
         } else {
             if (!player.canRollDice()) { //if the player has any penalty
@@ -210,10 +213,10 @@ public class Gameplay {
 
     //TODO pre
     private void resetGame() {
-        //TODO dá reset às posições, multas, deathOccurred e nextPlayer, mata o perdedor
         nextPlayer=0; // resets to 1st player
         while (players[nextPlayer].getDeathOrder()!=0) {nextPlayer++;}
         deathOccurred=false; // resets deathOccurred
+        turnNumber=0; // resets turn number
         PlayerIterator it = iterator();
         while (it.hasNext()) {
             Player player = it.next();
@@ -230,10 +233,11 @@ public class Gameplay {
     }
 
     public char getWinner() {
-        //TODO get cup winner
-        //Pre alivePlayers=1
-        //Quando aliveplayers.length==1 guarda o valor do vencedor e devolve-o através deste método
-        return '0';
+        /**
+         * Pre: isCupOver==true;
+         * @return char - Returns cup Winner
+         */
+        return rankIt().next().getColor();
     }
 
     //Call iterator

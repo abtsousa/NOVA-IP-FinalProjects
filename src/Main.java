@@ -7,16 +7,14 @@
 /* TODO
 
 CRISTÓVÃO
-- Acabar RESET DONE?
-- Matar ultimo jogador vivo se nao houver morto
-- Acabar o jogo qd há 1 vivo
+v Acabar RESET
+v Acabar o jogo qd há 1 vivo
 IMPLEMENTAR TORNEIO
 v J jogadores - J-1 jogos
 v Eliminar 1 jogador em cada jogo
 v Ganha o torneio quem for o único jogador vivo restante
 - Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
 v Tabela de classificação / comando classificação
-    - CONVERTER ISALIVE BOOLEAN PARA INT
     - 1º jogador eliminado é o último classificado, 2º o penúltimo etc etc
     v Dos vivos fica em primeiro quem tiver ganho mais jogos, em caso de empate é quem estiver mais perto da última casa, em caso de empate é quem joga primeiro
 
@@ -137,7 +135,7 @@ public class Main {
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
-            } else if (!game.getPlayerHealth(index))    {
+            } else if (game.getPlayerHealth(index)!=0)    {
                 System.out.println("Eliminated player");
             } else {
                 //The position P of the player object corresponds to the square P+1
@@ -161,7 +159,7 @@ public class Main {
                 System.out.println("Nonexistent player");
             } else if (game.isCupOver()) {
                 System.out.println("The cup is over");
-            }   else if (!game.getPlayerHealth(index))  {
+            }   else if (game.getPlayerHealth(index)!=0)  {
                 System.out.println("Eliminated player");
             } else if (game.getPlayerStatus(index)) {
                 System.out.printf("%c can roll the dice\n", color);
@@ -171,20 +169,18 @@ public class Main {
         }
     }
 
-    //TODO comando-ranking
     private static void printPlayerRanking(Gameplay game) {
         PlayerIterator it = game.rankIt();
         while (it.hasNext()) { //Run iterator
             Player pl = it.next();
-            if (pl.isAlive()) {
-                System.out.printf("%c: %d games won; on square %d.\n", pl.getColor(), pl.getScore(), pl.getPosition());
+            if (pl.getDeathOrder()==0) {
+                System.out.printf("%c: %d games won; on square %d.\n", pl.getColor(), pl.getScore(), pl.getPosition() + 1);
             } else {
                 System.out.printf("%c: %d games won; eliminated.\n", pl.getColor(), pl.getScore());
             }
         }
 
     }
-
 
     /** Dice command
      * Processes if the dice roll is valid and updates the board accordingly
