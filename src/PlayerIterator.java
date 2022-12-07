@@ -1,6 +1,6 @@
 public class PlayerIterator {
-    private Player[] players;
-    private int size;
+    private final Player[] players;
+    private final int size;
     private int nextIndex;
 
     public PlayerIterator(Player[] players, int size) {

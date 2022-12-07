@@ -22,7 +22,7 @@ public class Player {
     private int penalty; //Pre: >=0
     private int score; //Pre: >=0
     private int deathOrder; //Pre: >=1
-    private int playOrder; //Pre: >0
+    private final int playOrder; //Pre: >0
 
     //Constructor
 
