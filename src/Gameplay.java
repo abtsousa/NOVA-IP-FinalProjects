@@ -9,6 +9,9 @@
 
 /* TODO
  * Substituir "size - gamesPlayed" por alivePlayers - método? Ou trocamos a variável gamesPlayed por alivePlayers e alteramos as expressões em conformidade? Não faz sentido guardar ambas as variáveis
+ * Separar o método processNextTurn porque é enorme
+ * TESTAR NO MOOSHAK LOGO A SEGUIR PARA TER A CERTEZA QUE ESTÁ A FUNCIONAR IGUAL
+ * Acrescentar Javadoc incluindo PARAM, PRE e RETURN
  */
 
 public class Gameplay {

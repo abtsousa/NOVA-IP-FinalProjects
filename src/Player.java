@@ -2,12 +2,11 @@
  * @author Afonso Brás Sousa
  * @author Alexandre Cristóvão
  * Initializes each player
- * Object with 3 variables stored: color (char), position (int), penalty (int)
+ * Object with XXXX variables stored: color (char), position (int), penalty (int) XXX ETC TODO
  */
 
 /* TODO
-- Gravar no objecto Player o número de vitórias de um jogador e se este está vivo ou morto
-- Criar métodos para passar esses dados para as restantes classes
+ * Acabar Javadoc incl PARAM, PRE e RETURN em todos
  */
 
 public class Player {
