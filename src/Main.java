@@ -1,25 +1,11 @@
 /** MAIN CLASS
- * @author
+ * @authors Afonso Brás Sousa
+ * @author Alexandre Cristóvão
  * Responsible for interacting with the end user
  * Receives player input, processes commands and generates program output
 */
 
 /* TODO
-
-CRISTÓVÃO
-v Acabar RESET
-v Acabar o jogo qd há 1 vivo
-IMPLEMENTAR TORNEIO
-v J jogadores - J-1 jogos
-v Eliminar 1 jogador em cada jogo
-v Ganha o torneio quem for o único jogador vivo restante
-- Alterar os restantes comandos para mostrar “The cup is over” ou “Eliminated player” quando necessário
-v Tabela de classificação / comando classificação
-    - 1º jogador eliminado é o último classificado, 2º o penúltimo etc etc
-    v Dos vivos fica em primeiro quem tiver ganho mais jogos, em caso de empate é quem estiver mais perto da última casa, em caso de empate é quem joga primeiro
-
-CONCLUÍDO
-v Boards.txt (SECA)
 
 - CORRIGIR (ERROS 1º PROJECTO)
     - PRÉ-CONDIÇÕES MÉTODOS PÚBLICOS - fazer no fim
@@ -41,6 +27,7 @@ public class Main {
 
     /** MAIN
      * Receives input, processes the player order, creates the board, starts the interpreter
+     * @throws FileNotFoundException - no try...catch since file "boards.txt" must exist (Precond.)
      */
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -65,10 +52,10 @@ public class Main {
     /* Methods */
 
     /** Command interpreter
-     * Interprets and executes commands while cmd !=exit
+     * Interprets and executes commands while cmd != exit
      * Prints output
      * @param game - the game state
-     * @param in - Scanner input
+     * @param in - user input Scanner
      */
     private static void executeCmdLoop(Gameplay game, Scanner in) {
         String cmd, arg;
@@ -98,7 +85,7 @@ public class Main {
     /**
      * Splits the dice command argument into 2 integers
      * @param arg - the argument after the "dice" command
-     * pre: arg == "space + integer1 + space + integer2"
+     * pre: arg == two integers separated by a space
      * @return dice - array with 2 integers (dice values)
      */
     private static int[] splitArg(String arg) {
@@ -169,6 +156,10 @@ public class Main {
         }
     }
 
+    /** Ranking command
+     * Calls an iterator that sorts players by their ranking and prints their data one by one
+     * @param game - the game state
+     */
     private static void printPlayerRanking(Gameplay game) {
         PlayerIterator it = game.rankIt();
         while (it.hasNext()) { //Run iterator

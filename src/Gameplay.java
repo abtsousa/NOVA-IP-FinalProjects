@@ -1,4 +1,4 @@
-/** BOARD CLASS (SYSTEM)
+/** GAMEPLAY CLASS (SYSTEM)
  * @author Afonso Brás Sousa
  * @author Alexandre Cristóvão
  * Starts the game and manages the game state
@@ -7,25 +7,19 @@
  * Updates the position of each player after each turn
  */
 
-/* TODO (v = done)
-ALTERAR JOGO
-v Criar método que dê reset ao jogo quando alguém ganha
-v Ganha o jogo quem atingir a última casa ou quem conseguir 6+3 na primeira jogada
-v Multa com pena de 1-4 jogadas
-v 3 tipos de penalização - caranguejo, inferno (volta à 1ª casa) e morte (expulsa o jogador)
-    - Se alguém cair na morte o jogo continua excepto se só sobrar 1 jogador
-v VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor) -- erro do 1º projecto
+/* TODO
+ * Substituir "size - gamesPlayed" por alivePlayers - método? Ou trocamos a variável gamesPlayed por alivePlayers e alteramos as expressões em conformidade? Não faz sentido guardar ambas as variáveis
  */
 
 public class Gameplay {
     //Constants
-    //TODO
+    private static final int BIRD_JUMP = 9; //How many tiles do players advance on a bird tile
 
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
     private final int[] board; //tile array, saves each tile's "type"
-    private Player[] players; //players array in order
-    private int size; //number of alive players
+    private final Player[] players; //players array in order
+    private final int size; //number of players
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
     private int turnNumber;
@@ -124,7 +118,7 @@ public class Gameplay {
 
             switch (type) {
                 case BoardGen.INT_BIRD: //bird tile
-                    nextPosition = Math.min(nextPosition+BoardGen.BIRD_MULT, lastTile); //no o.o.b.
+                    nextPosition = Math.min(nextPosition+BIRD_JUMP, lastTile); //no o.o.b.
                     break;
                 case BoardGen.INT_FALL_CRAB: //crab tile
                     nextPosition = Math.max(position - diceResult, 0); //no out-of-bounds
