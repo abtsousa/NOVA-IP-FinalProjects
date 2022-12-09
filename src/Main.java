@@ -164,7 +164,8 @@ public class Main {
         while (it.hasNext()) { //Run iterator
             Player pl = it.next();
             if (pl.getDeathOrder()==0) {
-                System.out.printf("%c: %d games won; on square %d.\n", pl.getColor(), pl.getScore(), pl.getPosition() + 1);
+                System.out.printf("%c: %d games won; on square %d.\n",
+                        pl.getColor(), pl.getScore(), pl.getPosition() + 1);
             } else {
                 System.out.printf("%c: %d games won; eliminated.\n", pl.getColor(), pl.getScore());
             }
@@ -179,7 +180,9 @@ public class Main {
      * @param dice2 - the second dice's value
      */
     private static void rollDice(Gameplay game, int dice1, int dice2) {
-        int diceLow, diceHigh; //sorts dice
+        int diceLow, diceHigh;
+
+        //sort the dice
         if (dice1<dice2) {diceLow = dice1; diceHigh = dice2;}
         else {diceLow = dice2; diceHigh = dice1;}
 

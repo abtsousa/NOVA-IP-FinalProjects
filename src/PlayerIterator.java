@@ -10,6 +10,11 @@ public class PlayerIterator {
     private final int size;
     private int nextIndex;
 
+    /**
+     * Constructor
+     * @param players - the Player object array to be listed
+     * @param size - the size of the array to be listed
+     */
     public PlayerIterator(Player[] players, int size) {
         this.players = players;
         this.size = size;
@@ -24,6 +29,9 @@ public class PlayerIterator {
         return nextIndex < size;
     }
 
+    /**
+     * @return the next player object in the array
+     */
     public Player next() {
         return players[nextIndex++];
     }

@@ -2,11 +2,8 @@
  * @author Afonso Brás Sousa
  * @author Alexandre Cristóvão
  * Initializes each player
- * Object with XXXX variables stored: color (char), position (int), penalty (int) XXX ETC TODO
- */
-
-/* TODO
- * Acabar Javadoc incl PARAM, PRE e RETURN em todos
+ * Object with 6 variables stored: color (char), position (int), penalty (int), score (int),
+ * order of death (int) and order of play (int)
  */
 
 public class Player {
@@ -21,10 +18,8 @@ public class Player {
     private int position; //Pre: >=0 && <=Board.tileNumber-1
     private int penalty; //Pre: >=0
     private int score; //Pre: >=0
-    private int deathOrder; //Pre: >=1
-    private final int playOrder; //Pre: >0
-
-    //Constructor
+    private int deathOrder; //Pre: <=0 (0 == not dead; <0 == game in which they died)
+    private final int playOrder; //Pre: >=0
 
     /** Constructor
      * Creates player object
@@ -63,7 +58,7 @@ public class Player {
     }
 
     /**
-     * @return boolean - if the player can play
+     * @return int - the game in which the player died (negative number) or 0 if not dead
      */
     public int getDeathOrder() {return deathOrder;}
 
@@ -75,14 +70,14 @@ public class Player {
     }
 
     /**
-     * @return int - the player's creation order
+     * @return int - the order in which the player plays
      */
     public int getPlayOrder()   {return playOrder;}
 
     /**
      * Updates the player's position
      * @param newPosition - integer with the player's new position
-     * pre: must be a valid position ( checked by Board.processNextTurn() )
+     * pre: must be a valid position ( checked by Gameplay.processNextTurn() )
      */
     public void movePlayer(int newPosition) {
         position = newPosition;
@@ -110,40 +105,64 @@ public class Player {
 
     /**
      * Stops player from playing
+     * @param gamesPlayed - the game in which the player died (0 = first game, 1 = second etc)
      */
     public void kill(int gamesPlayed) {
         deathOrder = (gamesPlayed+1)*-1;
     }
 
-    /**
-     * Compares Player's deathOrder status
+    /** Comparers
+     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2 for various variables
      */
-    private int compareAlive (Player other)  {
+
+    /**
+     * Compares Player's deathOrder status with another player
+     * @param other - the second player
+     * @return >0 - P1 is alive or died last; <0 - P2 is alive or died last; =0 - both alive/dead
+     */
+    private int compareDeathOrder(Player other)  {
         if (deathOrder < 0 && other.deathOrder < 0) {return other.getDeathOrder() - deathOrder;}
         else {return deathOrder - other.getDeathOrder();}
     }
 
     /**
-     * Compares Player's score
+     * Compares Player's score with another player
+     * @param other - the second player
+     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2
      */
     private int compareScore (Player other)  {
         return score-other.getScore();
     }
 
     /**
-     * Compares Player's posiion
+     * Compares Player's posiion with another player
+     * @param other - the second player
+     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2
      */
     public int comparePosition (Player other)  {
         return position-other.getPosition();
     }
 
+    /**
+     * Compares Player's playing order with another player
+     * @param other - the second player
+     * @returns who plays FIRST (ascending order)
+     */
     private int comparePlayOrder(Player other) {
-        return other.getPlayOrder()-playOrder; //ordem inversa
+        return other.getPlayOrder()-playOrder; //ascending order
     }
-//TODO mudar nome para compareDeathOrderx
-    public int rankedCompare(Player other) {
-        if (compareAlive(other)!=0) {
-            return compareAlive(other);
+
+    /**
+     * Compare a player's rank with another player
+     * Combines many compare methods in the required order to give an accurate ranking of each
+     * player.
+     * Modularity allows for easy management / changing of criteria order if needed
+     * @param other - the second player
+     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2
+     */
+    public int compareRank(Player other) {
+        if (compareDeathOrder(other)!=0) {
+            return compareDeathOrder(other);
         } else if (compareScore(other)!=0) {
             return compareScore(other);
         } else if (comparePosition(other)!=0) {
@@ -153,6 +172,13 @@ public class Player {
         }
     }
 
+    /**
+     * Compares alive players
+     * Used at the end of a game to determine which alive player dies
+     * Pre: both players are alive
+     * @param other - the second player
+     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2
+     */
     public int aliveCompare(Player other) {
         if (comparePosition(other)!=0) {
             return comparePosition(other);
