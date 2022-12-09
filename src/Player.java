@@ -40,6 +40,7 @@ public class Player {
         this.playOrder = order;
     }
 
+    //Methods
     /** Getters
      * @return char - the player's color
      */

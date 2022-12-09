@@ -49,8 +49,7 @@ public class Main {
         in.close();
     }
 
-    /* Methods */
-
+    //Methods
     /** Command interpreter
      * Interprets and executes commands while cmd != exit
      * Prints output

@@ -17,6 +17,9 @@
 public class Gameplay {
     //Constants
     private static final int BIRD_JUMP = 9; //How many tiles do players advance on a bird tile
+    private static final int SPECIAL_CASE_DICE_LOW = 3; /*TODO DESCRIPTION*/
+    private static final int SPECIAL_CASE_DICE_HIGH = 6; /*TODO DESCRIPTION*/
+
 
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
@@ -46,6 +49,7 @@ public class Gameplay {
         cupOver = false;
     }
 
+    //Methods
     /**
      * Creates the player array
      * TODO @param etc
@@ -111,14 +115,15 @@ public class Gameplay {
         int position = player.getPosition();
         int nextPosition, diceResult;
 
-        //Movement start
+        //Pre Movement Checks METHOD START 5
         if (turnNumber < size - gamesPlayed && diceLow == 3 && diceHigh == 6) { //special case - instant win //TODO pode estar na posição 0 sem ser a 1ª jogada
             nextPosition = lastTile;
         } else {
             diceResult = diceLow + diceHigh;
             nextPosition = Math.min(position + diceResult, lastTile); //no out-of-bounds
+            //Pre Movement Checks Case METHOD END 5
+            //Movement start METHOD START 23
             int type = getSquareType(nextPosition);
-
             switch (type) {
                 case BoardGen.INT_BIRD: //bird tile
                     nextPosition = Math.min(nextPosition+BIRD_JUMP, lastTile); //no o.o.b.
@@ -142,18 +147,19 @@ public class Gameplay {
                     }
                     break;
             }
-
+            //Apply Penalty METHOD END  6
             if (type<0) { //penalty tile TODO pre 1-4 etc
                 int penalty = type*-1;
                 player.applyPenalty(penalty);
             }
             turnNumber++;
         }
+        //Appply Penalty METHOD END 6
 
         player.movePlayer(nextPosition); //TODO move mesmo que o jogador seja morto
 
         //TODO este check fica aqui ou fica no movePlayer? Ou no passTurn? Ou num método à parte -- acho a última a melhor
-
+        //Post Movement METHOD START 18
         if (nextPosition == lastTile) { //checks for winner
             player.addPoint();
 
@@ -173,6 +179,7 @@ public class Gameplay {
         } else {
             passTurn();
         }
+        //Post Movement METHOD END 18
     }
 
     /**
@@ -270,7 +277,7 @@ public class Gameplay {
         for (int i=0; i < size-1; i++) {
             int idx = i;
             for (int j=i+1; j< size; j++) {
-                if (list[j].rankedCompare(list[idx]) > 0) {
+                if (list[j].compareRank(list[idx]) > 0) {
                     idx = j;
                 }
             }
