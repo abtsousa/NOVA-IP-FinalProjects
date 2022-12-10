@@ -114,7 +114,7 @@ public class Main {
             int index = game.searchPlayer(color);
             if (index == -1) { //player not found
                 System.out.println("Nonexistent player");
-            } else if (game.getPlayerHealth(index)!=0)    {
+            } else if (game.getDeathCertificate(index))    {
                 System.out.println("Eliminated player");
             } else {
                 //The position P of the player object corresponds to the square P+1
@@ -138,7 +138,7 @@ public class Main {
                 System.out.println("Nonexistent player");
             } else if (game.isCupOver()) {
                 System.out.println("The cup is over");
-            }   else if (game.getPlayerHealth(index)!=0)  {
+            }   else if (game.getDeathCertificate(index))  {
                 System.out.println("Eliminated player");
             } else if (game.getPlayerStatus(index)) {
                 System.out.printf("%c can roll the dice\n", color);

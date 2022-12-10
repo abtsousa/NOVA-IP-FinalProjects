@@ -7,13 +7,6 @@
  * Updates the position of each player after each turn
  */
 
-/* TODO
- * Substituir "size - gamesPlayed" por alivePlayers - método? Ou trocamos a variável gamesPlayed por alivePlayers e alteramos as expressões em conformidade? Não faz sentido guardar ambas as variáveis
- * Separar o método processNextTurn porque é enorme
- * TESTAR NO MOOSHAK LOGO A SEGUIR PARA TER A CERTEZA QUE ESTÁ A FUNCIONAR IGUAL
- * Acrescentar Javadoc incluindo PARAM, PRE e RETURN
- */
-
 public class Gameplay {
     //Constants
     private static final int BIRD_JUMP = 9; //How many tiles do players advance on a bird tile
@@ -29,7 +22,7 @@ public class Gameplay {
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
     private int turnNumber;
-    private int gamesPlayed;
+    private int alivePlayers;
     private boolean cupOver;
 
     /** Constructor
@@ -47,7 +40,7 @@ public class Gameplay {
         players = populatePlayers(playerOrder);
         nextPlayer = 0;
         size = players.length;
-        gamesPlayed = 0;
+        alivePlayers = size;
         turnNumber = 0;
         cupOver = false;
     }
@@ -72,7 +65,7 @@ public class Gameplay {
     /**
      * Searches for a player by their color
      * @param searchColor - requested player's color
-     * @return i - integer with index / position of the player in the players array
+     * @return i - integer with index of the player in the players array
      * @return -1 if no player found
      */
     public int searchPlayer(char searchColor) {
@@ -93,6 +86,7 @@ public class Gameplay {
 
     /** Square command
      * @param index - index of the requested player in the players array
+     *              - Pre: index >=0 && index < size
      * @return position of the requested player
      */
     public int getPlayerSquare(int index) {
@@ -101,16 +95,23 @@ public class Gameplay {
 
     /** Status command
      * @param index - index of the requested player in the players array
+     *              - Pre: index >=0 && index < size
      * @return boolean - can the requested player roll the dice when it's their turn?
      */
     public boolean getPlayerStatus(int index) {
         return players[index].canRollDice();
     }
 
-    public int getPlayerHealth(int index) {
-        return players[index].getDeathOrder();
+    /**
+     * @param index - index of the requested player in the players array
+     *              - Pre: index >=0 && index < size
+     * @return boolean - is the requested player dead?
+     */
+    public boolean getDeathCertificate(int index) {
+        return players[index].getDeathOrder()!=0;
     }
-    /** Dice command
+
+    /**
      * Rolls the dice and processes one turn
      * @param diceLow - integer representing thrown dices' lowest value
      * @param diceHigh - integer representing thrown dices' highest value
@@ -121,71 +122,74 @@ public class Gameplay {
         int position = player.getPosition();
         int nextPosition, diceResult;
 
-        //Pre Movement Checks METHOD START 5
-        if (turnNumber < size - gamesPlayed && diceLow == 3 && diceHigh == 6) { //special case - instant win //TODO pode estar na posição 0 sem ser a 1ª jogada
+        //Special case - instant win
+        if (turnNumber < alivePlayers && diceLow==SPECIALDICE_LOW && diceHigh==SPECIALDICE_HIGH) {
             nextPosition = lastTile;
         } else {
             diceResult = diceLow + diceHigh;
-            nextPosition = Math.min(position + diceResult, lastTile); //no out-of-bounds
-            //Pre Movement Checks Case METHOD END 5
-            //Movement start METHOD START 23
-            int type = getSquareType(nextPosition);
-            switch (type) {
-                case BoardGen.INT_BIRD: //bird tile
-                    nextPosition = Math.min(nextPosition+BIRD_JUMP, lastTile); //no o.o.b.
-                    break;
-                case BoardGen.INT_FALL_CRAB: //crab tile
-                    nextPosition = Math.max(position - diceResult, 0); //no out-of-bounds
-                    break;
-                case BoardGen.INT_FALL_HELL: //hell tile
-                    nextPosition = 0;
-                    break;
-                case BoardGen.INT_FALL_DEATH: //death tile
-                    if (!deathOccurred) {
-                        player.kill(gamesPlayed);
-                        deathOccurred = true;
-                        if (size - gamesPlayed == 2) { //if there were only 2 alive players left
-                            cupOver = true;
-                            int winner = searchPlayer(getWinner());
-                            players[winner].addPoint();
-                            gamesPlayed++;
-                        }
-                    }
-                    break;
-            }
-            //Apply Penalty METHOD END  6
-            if (type<0) { //penalty tile TODO pre 1-4 etc
-                int penalty = type*-1;
-                player.applyPenalty(penalty);
-            }
+            nextPosition = nextValidPosition(player, position, diceResult);
             turnNumber++;
         }
-        //Appply Penalty METHOD END 6
 
-        player.movePlayer(nextPosition); //TODO move mesmo que o jogador seja morto
+        player.movePlayer(nextPosition);
 
-        //TODO este check fica aqui ou fica no movePlayer? Ou no passTurn? Ou num método à parte -- acho a última a melhor
-        //Post Movement METHOD START 18
-        if (nextPosition == lastTile) { //checks for winner
+        //Post Movement
+        checkForWinner(nextPosition, player);
+    }
+
+    /** Returns the next valid position for the play
+     * @param player - indicates current player
+     * @param position - indicates player's position
+     * @param diceResult - indicates total sum of dice thrown
+     * @return the player's next position
+     */
+    private int nextValidPosition (Player player, int position, int diceResult) {
+        int nextPosition = Math.min(position + diceResult, lastTile); //no out-of-bounds
+        int type = getSquareType(nextPosition);
+        if (type<0) {player.applyPenalty(type*(-1));} //penalty tile
+        switch (type) {
+            case BoardGen.INT_BIRD: //bird tile
+                return Math.min(nextPosition+BIRD_JUMP, lastTile); //no o.o.b.
+            case BoardGen.INT_FALL_CRAB: //crab tile
+                return Math.max(position - diceResult, 0); //no out-of-bounds
+            case BoardGen.INT_FALL_HELL: //hell tile
+                return 0;
+            case BoardGen.INT_FALL_DEATH: //death tile
+                if (!deathOccurred) {
+                    player.kill(size - alivePlayers);
+                    deathOccurred = true;
+                    if (alivePlayers == 2) { //if there were only 2 alive players left
+                        cupOver = true;
+                        int winner = searchPlayer(getWinner());
+                        players[winner].addPoint();
+                        alivePlayers--;
+                    }
+                }
+            default: return nextPosition;
+        }
+    }
+
+    /** Checks if the move was a winning move
+     * @param position - indicates player's position
+     * @param player - indicates current player
+     */
+    private void checkForWinner(int position, Player player) {
+        if (position == lastTile) {
             player.addPoint();
 
             if (!deathOccurred) {
                 Player lastPlayer = aliveIt().next();
-                lastPlayer.kill(gamesPlayed);
+                lastPlayer.kill(size - alivePlayers);
             }
 
-            gamesPlayed++;
+            alivePlayers--;
 
-            if (gamesPlayed < size - 1) {
-                resetGame();
-            } else {
-                cupOver = true;
-            }
+            if (alivePlayers > 1) {resetGame();}
+            else {cupOver = true;}
 
         } else {
             passTurn();
         }
-        //Post Movement METHOD END 18
     }
 
     /**
@@ -226,7 +230,7 @@ public class Gameplay {
      */
     private void resetGame() {
         nextPlayer=0; // resets to 1st player
-        while (players[nextPlayer].getDeathOrder()!=0) {nextPlayer++;}
+        while (getDeathCertificate(nextPlayer)) {nextPlayer++;} //skips to an alive player
         deathOccurred=false; // resets deathOccurred
         turnNumber=0; // resets turn number
         PlayerIterator it = iterator();
@@ -253,7 +257,11 @@ public class Gameplay {
         return rankIt().next().getColor();
     }
 
-    //Call iterator
+    //Iterators
+
+    /** Call iterator
+     * @return iterator with all players
+     */
     public PlayerIterator iterator() {
         return new PlayerIterator(players, size);
     }
@@ -266,7 +274,7 @@ public class Gameplay {
         for (int i = 0; i < size; i++) {
             rankedPlayers[i] = players[i];
         }
-        sort(rankedPlayers, size);
+        sortRank(rankedPlayers, size);
         return new PlayerIterator(rankedPlayers, size);
     }
 
@@ -274,19 +282,23 @@ public class Gameplay {
      * @return iterator with all alive players sorted by position and play order
      */
     public PlayerIterator aliveIt() {
-        Player[] alivePlayers = new Player[size - gamesPlayed]; //morre 1 jogador por cada jogo
+        Player[] aliveArray = new Player[alivePlayers];
         int j=0;
         for (int i = 0; i < size; i++) {
-            if (players[i].getDeathOrder()==0) { //check for condition
-                alivePlayers[j++] = players[i];
+            if (!getDeathCertificate(i)) { //check for condition
+                aliveArray[j++] = players[i];
             }
         }
-        sortAlive(alivePlayers, size - gamesPlayed);
-        return new PlayerIterator(alivePlayers, j);
+        sortAlive(aliveArray, alivePlayers);
+        return new PlayerIterator(aliveArray, j);
     }
 
-
-    private void sort(Player[] list, int size) {
+    /**
+     * Sorts a Player object array by their ranking
+     * @param list - the Player object array to be ranked
+     * @param size - the array size
+     */
+    private void sortRank(Player[] list, int size) {
         for (int i=0; i < size-1; i++) {
             int idx = i;
             for (int j=i+1; j< size; j++) {
@@ -300,7 +312,12 @@ public class Gameplay {
         }
     }
 
-    //sorts alive players by position on the board
+    /**
+     * Sorts a Player object array to determine who to kill at the end of a game
+     * @param list - the Player object array to be ranked
+     *             - Pre: contains alive players
+     * @param size - the array size
+     */
     private void sortAlive(Player[] list, int size) {
         for (int i=0; i < size-1; i++) {
             int idx = i;

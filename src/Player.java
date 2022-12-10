@@ -150,7 +150,7 @@ public class Player {
     /**
      * Compares Player's playing order with another player
      * @param other - the second player
-     * @returns who plays FIRST (ascending order)
+     * @returns who plays FIRST (ascending order) - P1 if <0, P2 if >0
      */
     private int comparePlayOrder(Player other) {
         return other.getPlayOrder()-playOrder; //ascending order
