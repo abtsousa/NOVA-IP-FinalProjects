@@ -17,15 +17,15 @@
 public class Gameplay {
     //Constants
     private static final int BIRD_JUMP = 9; //How many tiles do players advance on a bird tile
-    private static final int SPECIAL_CASE_DICE_LOW = 3; /*TODO DESCRIPTION*/
-    private static final int SPECIAL_CASE_DICE_HIGH = 6; /*TODO DESCRIPTION*/
+    private static final int SPECIALDICE_LOW = 3; //Lowest dice value for special case
+    private static final int SPECIALDICE_HIGH = 6; //Highest dice value for special case
 
 
     //Instance variables
     private final int lastTile; //how many tiles //Pre: >=10 && <=150
     private final int[] board; //tile array, saves each tile's "type"
     private final Player[] players; //players array in order
-    private final int size; //number of players
+    private final int size; //number of players //Pre: >=3 && <=10
     private int nextPlayer; //defines who plays next
     private boolean deathOccurred;
     private int turnNumber;
@@ -34,7 +34,10 @@ public class Gameplay {
 
     /** Constructor
      * Defines the inicial board state
-     * TODO @param etc
+     * @param board - integer array representing the board's tiles
+     * @param playerOrder - string representing the players who'll play the game
+     * pre: board must be valid according to the specifications mentioned in the BoardGen class
+     * pre: playerOrder must have between 3 and 10 unique capital letters
      */
     public Gameplay(int[] board, String playerOrder) {
         this.board = board;
@@ -52,7 +55,9 @@ public class Gameplay {
     //Methods
     /**
      * Creates the player array
-     * TODO @param etc
+     * @param playersString - string with each player's character in their playing order
+     *                      - Pre: 3-10 unique capital letters
+     * @return array of players
      */
     private Player[] populatePlayers(String playersString) {
         char[] playerOrder = playersString.toCharArray();
@@ -107,9 +112,10 @@ public class Gameplay {
     }
     /** Dice command
      * Rolls the dice and processes one turn
-     * TODO @param
+     * @param diceLow - integer representing thrown dices' lowest value
+     * @param diceHigh - integer representing thrown dices' highest value
+     * Pre: both dice >=1 && <=6 (checked by Main.rolldice() )
      */
-    //TODO método enorme - separar em métodos mais pequenos
     public void processNextTurn(int diceLow, int diceHigh) {
         Player player = players[nextPlayer];
         int position = player.getPosition();
@@ -183,8 +189,8 @@ public class Gameplay {
     }
 
     /**
-     * @return Returns the "type" of the requested square
      * @param square - index of the requested square
+     * @return Returns the "type" of the requested square
      */
     private int getSquareType(int square) {
         return board[square];
@@ -215,7 +221,9 @@ public class Gameplay {
         }
     }
 
-    //TODO pre
+    /**
+     * Resets the game after a win
+     */
     private void resetGame() {
         nextPlayer=0; // resets to 1st player
         while (players[nextPlayer].getDeathOrder()!=0) {nextPlayer++;}
@@ -236,11 +244,12 @@ public class Gameplay {
         return cupOver;
     }
 
+    /**
+     * Pre: isCupOver==true;
+     * @return char - Returns cup Winner
+     */
     public char getWinner() {
-        /**
-         * Pre: isCupOver==true;
-         * @return char - Returns cup Winner
-         */
+
         return rankIt().next().getColor();
     }
 
@@ -249,7 +258,9 @@ public class Gameplay {
         return new PlayerIterator(players, size);
     }
 
-    //RANKING - Sortered iterator
+    /** RANKING - Sortered iterator
+     * @return iterator with all players sorted by ranking
+     */
     public PlayerIterator rankIt() {
         Player[] rankedPlayers = new Player[size];
         for (int i = 0; i < size; i++) {
@@ -259,7 +270,9 @@ public class Gameplay {
         return new PlayerIterator(rankedPlayers, size);
     }
 
-    //ALIVE - Filtered and sortered iterator
+    /** ALIVE - Filtered and sortered iterator
+     * @return iterator with all alive players sorted by position and play order
+     */
     public PlayerIterator aliveIt() {
         Player[] alivePlayers = new Player[size - gamesPlayed]; //morre 1 jogador por cada jogo
         int j=0;

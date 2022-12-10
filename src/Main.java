@@ -5,13 +5,6 @@
  * Receives player input, processes commands and generates program output
 */
 
-/* TODO
-
-- CORRIGIR (ERROS 1º PROJECTO)
-    - PRÉ-CONDIÇÕES MÉTODOS PÚBLICOS - fazer no fim
-    v VARRER SE A JOGADA FOI VENCEDORA NO FINAL DE CADA JOGADA (em vez de varrer no final se existe algum vencedor)
- */
-
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 

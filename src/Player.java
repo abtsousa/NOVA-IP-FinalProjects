@@ -24,6 +24,7 @@ public class Player {
     /** Constructor
      * Creates player object
      * @param color - character representing the player's color
+     * @param order - integer representing the player's playing order
      * pre: color must be a unique capital letter
      */
     public Player(char color, int order) {
@@ -77,6 +78,7 @@ public class Player {
     /**
      * Updates the player's position
      * @param newPosition - integer with the player's new position
+     * Pre: player is alive
      * pre: must be a valid position ( checked by Gameplay.processNextTurn() )
      */
     public void movePlayer(int newPosition) {
@@ -85,6 +87,7 @@ public class Player {
 
     /**
      * Lowers the player's penalty by 1
+     * pre: player is alive
      * pre: penalty > 0
      */
     public void lowerPenalty() {
@@ -100,11 +103,13 @@ public class Player {
 
     /**
      * Adds a point to the player's score
+     * pre: player is alive
      */
     public void addPoint() {this.score++;}
 
     /**
      * Stops player from playing
+     * pre: player is alive
      * @param gamesPlayed - the game in which the player died (0 = first game, 1 = second etc)
      */
     public void kill(int gamesPlayed) {
@@ -112,7 +117,6 @@ public class Player {
     }
 
     /** Comparers
-     * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2 for various variables
      */
 
     /**
@@ -175,7 +179,7 @@ public class Player {
     /**
      * Compares alive players
      * Used at the end of a game to determine which alive player dies
-     * Pre: both players are alive
+     * pre: both players are alive
      * @param other - the second player
      * @return positive if P1 > P2, negative if P2 > P1 and 0 if P1=P2
      */
