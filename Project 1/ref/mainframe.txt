@@ -1,0 +1,21 @@
+´Projecto 1 IP - Glória
+Classe main
+- Recebe inputs
+- Processa
+- Gera outputs
+
+Classe Board
+- Variáveis: Array com C casas (10-150) e tipo N/P/M/F(fall = precipício) (entre a casa 2 e C-1)
+    - normal - j.P+R
+    - pássaro - múltiplas de 9; j.P+9
+    - multa - j.Pena+2
+    - precipício - j.P-R
+- Define 3 jogadores e ordem (array jogadores com objectos jogador)
+- Lança 2 dados e retorna resultado R
+    - se j.P+r > C, a posição mantém-se
+    - se j.P-r < 1, j.P = 1
+- Processa posição dos jogadores
+- Define e processa casas especiais
+
+Classe Jogador
+- Variáveis: Marca (R, G ou B), posição P, multa/pena M

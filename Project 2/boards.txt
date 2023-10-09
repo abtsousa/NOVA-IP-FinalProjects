@@ -1,0 +1,27 @@
+18
+2
+5 2
+10 1
+4
+11 death
+13 crab
+15 hell
+17 crab
+25
+3
+7 1
+17 4
+19 2
+3
+6 hell
+20 hell
+24 death
+33
+1
+11 3
+5
+4 death
+6 death
+13 crab
+14 crab
+19 hell
