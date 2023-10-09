@@ -1,4 +1,4 @@
-This folder contains the both final projects for the Intro to Programming class at NOVA SST 2022/2023.
+This repo contains both final projects for the Intro to Programming class at NOVA SST 2022/2023.
 
 They are both based on the board game "Game of Life", or "Jogo da Glória", as it's known in Portugal.
 
